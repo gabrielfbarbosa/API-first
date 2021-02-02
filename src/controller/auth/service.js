@@ -19,7 +19,7 @@ const authService = {
             const emailExist = await User.findOne({ email });
 
             if (emailExist) {
-                throw new Error(' ERRO = [EMAIL JA CADASTRADO] ')
+                throw new Error(' [EMAIL JA CADASTRADO] ')
             }
             user.save()
             return user
@@ -52,9 +52,15 @@ const authService = {
             throw new Error(error)
         }
     },
+
     async updadeOneUser(body) { //Update nao saiu nem rezando!!
-        try {
-            const findUpdate = await User.updateOne(body)
+        
+        try { 
+            const {cpf} = User
+                        
+            const findUpdate = await User.updateOne(body, {
+                $set:{ cpf: cpf } 
+            })
 
             if (!findUpdate) {
                 throw new Error(' [NÃO FOI POSSIVEL ATUALIZAR] ')

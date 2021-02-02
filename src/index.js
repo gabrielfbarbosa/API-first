@@ -1,5 +1,5 @@
-require('./config/connection') //para conectar ao BD
 //importando
+require('./config/connection') //para conectar ao BD
 const express = require('express')
 const bodyParser = require('body-parser')
 const router = require('./router')
@@ -15,5 +15,5 @@ app.listen(PORT, () => {  //identificação da porta em que o servidor esta roda
 })
 
 app.get('/', (req, res) => { //evitar o "cannot GET /"
-    res.send({ "API":" v0.1 " }).json
+    res.send({ " API " : " v0.1 " }).json
 })

@@ -6,8 +6,10 @@ async function cadastrar(req, res) { //cadastrando
         if (user) {
             res.status(200).json('CADASTRADO COM SUCESSO!')
         }
+        
     } catch (error) {
         res.status(400).json(error.message)
+
     }
 }
 
@@ -40,8 +42,10 @@ async function updateUser(req, res) {
         if (user){
             return res.status(200).json(user)
         }
+        console.log(user)
     } catch (error) {
-        res.status(400).json(' Algo deu errado ')
+        res.status(400).json(error)
+        console.log(error);
     }
 }
 

@@ -26,7 +26,7 @@ async function findAll(req, res) { //encontrando todos os cadastros
 
 async function deleteUserId(req, res) { //deletando por email.
     try {
-        const user = await authSrv.deleteUser(req.email)
+        const user = await authSrv.deleteUser(req)
 
         if (user){
             return res.status(200).json('Usuario deletado com sucesso!')
@@ -39,7 +39,7 @@ async function deleteUserId(req, res) { //deletando por email.
 async function updateUser(req, res) {
     try {
         
-        const user = await authSrv.updadeOneUser(req)
+        const user = await authSrv.updadeOneUser(req.body)
         
         if (user){
             return res.status(200).json(user)

@@ -5,7 +5,7 @@ router.post('/cadastro', cadastrar)
 
 router.get('/consulta', findAll)
 
-router.delete('/cancelar/:email', deleteUserId)
+router.delete('/cancelar/:id', deleteUserId)
 
 router.put('/atualizar/:id', updateUser )
 

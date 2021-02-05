@@ -8,7 +8,7 @@ const authService = {
 
     async createUser(body) {
 
-        try { 
+        try {
             //caso tente cadastrar email ja cadastrado.
             const emailExist = await User.findOne({ email: body.email });
 
@@ -16,7 +16,7 @@ const authService = {
                 throw new Error(' [EMAIL JA CADASTRADO] ');
             }
             //criando cadastro
-            const user = await User.create(body); 
+            const user = await User.create(body);
 
             user.save();
             return user;
@@ -37,7 +37,11 @@ const authService = {
 
     async deleteUser(body) { //deletar dados do BD por email
         try {
-            const findUser = await User.deleteOne()
+            // const query = { User }
+            const findUser = await User.deleteOne({_id: body.params.id})
+            // User.deleteOne(findUser) //Deleta do banco, mas aq diz q deletou 0
+                .then(result => console.log(`Deleted ${result.deletedCount} item.`))
+                .catch(err => console.error(`Delete failed with error: ${err}`))
 
             if (!findUser) {
                 throw new Error(' [USUARIO NÃO ENCONTRADO] ')
@@ -49,20 +53,21 @@ const authService = {
         }
     },
 
-    async updadeOneUser(req) {
+    async updadeOneUser(body) {
 
-        
         try {
-            
+
             const findUpdate = await User.updateOne(
-                {_id: req.params.id}, //filter 
+                { _id: body.params.id }, //filter 
                 findUpdate.cpf = req.body.cpf , //Update
             )
 
             if (!findUpdate) {
                 throw new Error(' [NÃO FOI POSSIVEL ATUALIZAR] ')
             }
+
             return await findUpdate.save()
+
         } catch (error) {
             throw new Error(error)
         }
@@ -74,8 +79,8 @@ const authService = {
             const { email, password } = body;
 
             const user = await User.findOne({ email }).select('+password');
-            
-            if (!user){
+
+            if (!user) {
                 throw new Error(' [ Usuario não encontrado ] ');
             }
 
@@ -86,15 +91,15 @@ const authService = {
             user.password = undefined; //Para nao voltar a senha
 
             const token = jwt.sign(
-                {id: user.id},
+                { id: user.id },
                 authHash.secret, //hash md5 criado no google
-                {expiresIn: 86400},
+                { expiresIn: 86400 },
             )
-            
+
             return ({ user, token });
-            
+
         } catch (error) {
-            throw new Error (error)
+            throw new Error(error)
         }
     }
 }

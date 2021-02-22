@@ -7,7 +7,7 @@ router.get('/consulta', findAll)
 
 router.delete('/cancelar/:id', deleteUserId)
 
-router.put('/atualizar/:id', updateUser )
+router.patch('/atualizar/:id', updateUser )
 
 router.post('/login', autenticate)
 

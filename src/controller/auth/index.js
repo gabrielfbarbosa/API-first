@@ -1,6 +1,7 @@
 const authSrv = require("./service");
 
-async function cadastrar(req, res) { //cadastrando
+//cadastrando
+async function cadastrar(req, res) { 
     try {
         const user = await authSrv.createUser(req.body);
         if (user) {
@@ -13,6 +14,7 @@ async function cadastrar(req, res) { //cadastrando
     }
 }
 
+//consulta de cadastrados
 async function findAll(req, res) { //encontrando todos os cadastros 
     try {
         const users = await authSrv.allUsers()
@@ -24,22 +26,27 @@ async function findAll(req, res) { //encontrando todos os cadastros
     }
 }
 
-async function deleteUserId(req, res) { //deletando por email.
+// Deletar cadastro com id
+async function deleteUserId(req, res) { //deletando por id.
     try {
-        const user = await authSrv.deleteUser(req)
+        const delUser = await authSrv.deleteUser(req)
 
-        if (user){
+        if (delUser){
             return res.status(200).json('Usuario deletado com sucesso!')
         }
+
+        // if (!delUser) {return res.status(400).json(' [Usuario não encontrado] ')}
+
     } catch (error) {
         res.status(400).json(error.message)
     }
 }
 
+//Atulaizar um ou mais dados
 async function updateUser(req, res) {
     try {
         
-        const user = await authSrv.updadeOneUser(req.body)
+        const user = await authSrv.updadeOneUser(req.params.id, req.body)
         
         if (user){
             return res.status(200).json(user)
@@ -51,6 +58,7 @@ async function updateUser(req, res) {
     }
 }
 
+//Login 
 async function autenticate(req, res) {
     try {
         const logIn = await authSrv.login(req.body)

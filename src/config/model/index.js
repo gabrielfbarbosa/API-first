@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema ({
     password: {
         type:String,
         required: true,
-        select: false
+        // select: false
     },
     cpf: {
         type:String,
@@ -22,13 +22,14 @@ const userSchema = new mongoose.Schema ({
     },
 })
 
+//usando direto la no tratamento do login
 //criptografia da senha com hash
-userSchema.pre("save", async function(next) {
-    const hash = await bcrypt.hash(this.password, 10)
-    this.password = hash
+// userSchema.pre("save", async function(next) {
+//     const hash = await bcrypt.hashSync(this.password, 10)
+//     this.password = hash
 
-    next()
-})
+//     next()
+// })
 
 const User = mongoose.model('users', userSchema)
 

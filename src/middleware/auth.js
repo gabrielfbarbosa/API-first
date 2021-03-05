@@ -8,11 +8,11 @@ module.exports = (req, res, next) => {
         return res.status(401).send({ error: '[ Token não informado ]' });
     }
 
-    /* para receber  token no formato certo:
+    /* para receber token no formato certo:
     Bearer qskfnijwelkfeffwd6f516rg654g4 */
     const parts = authHeader.split(' ')//tem que ter um espaço 
 
-    if (!parts.length === 2) { // verificando de tem 2 partes memso
+    if (!parts.length === 2) { // verificando Se  TOKEN tem 2 partes
         return res.status(401).send({ error: ' [ Erro com o Token ] ' })
     }
 

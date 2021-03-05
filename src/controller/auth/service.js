@@ -3,6 +3,7 @@ const User = require('./../../config/model/index')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authHash = require('./hash.json')
+const { findOne } = require('./../../config/model/index')
 
 const authService = {
 
@@ -18,13 +19,13 @@ const authService = {
             }
 
             // criptografando a senha 
-            body.password = bcrypt.hashSync(body.password, 10)
+            // body.password = bcrypt.hashSync(body.password, 10)
 
             //cria cadastro
             const user = await User.create(body);
 
             user.save();
-            return user;
+            return await user;
 
         } catch (error) {
             throw new Error(error);
@@ -45,13 +46,18 @@ const authService = {
     async deleteUser(body) { //deletar dados do BD por email
         try {
 
-            const findUser = await User.deleteOne({ _id: body.params.id })
-            // .then(result => console.log(`Deleted ${result.deletedCount} item.`))
-            // .catch(err => console.error(`Delete failed with error: ${err}`))
+            const userExist = await User.findOne({ _id: body.params.id });
+            console.log(userExist)
 
-            if (!findUser) throw new Error(` [USUARIO NÂO ENCONTRADO] `);
+            if ( userExist ) 
 
-            return await findUser
+             await User.deleteOne({ _id: body.params.id })
+            .then(result => console.log(`Deleted ${result.deletedCount} item.`))
+            .catch(err => console.error(`Delete failed with error: ${err}`))
+
+            else throw new Error(` [USUARIO NÂO ENCONTRADO] `);
+
+            return await userExist
 
         } catch (error) {
             throw new Error(error)
@@ -59,15 +65,16 @@ const authService = {
     },
 
     //Atualizar um ou mais dados
-    async updadeOneUser( id ,body) {
+    async updadeOneUser(id, body) {
 
         try {
 
             const findUpdate = await User.findByIdAndUpdate(
-                {_id: id }, //filter 
-                body , 
-                //Update
+                { _id: id }, //filter 
+                body, //Update 
+                { new: true } //retorna o cadastro atualizado              
             )
+            body.password = bcrypt.hashSync(body.password, 10)
 
             if (!findUpdate) {
                 throw new Error(' [NÃO FOI POSSIVEL ATUALIZAR] ')
@@ -92,23 +99,23 @@ const authService = {
                 throw new Error(' [ Usuario não encontrado ] ');
             }
             //comparando os password encriptados
-            const cryp = await bcrypt.compareSync(password, user.password)
             //so funcionou com encriptação feita direto no cadastro
             //o q tem la no Model NÃO deu boa
+            const cryp = await bcrypt.compareSync(password, user.password)
 
             if (!cryp) {
                 throw new Error(' [ Senha incorreta ] ');
             }
 
-            user.password = undefined; //Para nao voltar a senha
+            //user.password = undefined; //Para nao voltar a senha
 
             const token = jwt.sign(
                 { id: user.id },
                 authHash.secret, //hash md5 criado no google
-                { expiresIn: 86400 },
+                { expiresIn: 86400 }, //1 Dia
             )
 
-            return ({
+            return await ({
                 user,
                 token
             });

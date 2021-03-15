@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authHash = require('./hash.json')
 const { findOne } = require('./../../config/model/index')
+const ncrypt = require('ncrypt-js') //TENTAR COM ESSE
 
 const authService = {
 
@@ -49,11 +50,11 @@ const authService = {
             const userExist = await User.findOne({ _id: body.params.id });
             console.log(userExist)
 
-            if ( userExist ) 
+            if (userExist)
 
-             await User.deleteOne({ _id: body.params.id })
-            .then(result => console.log(`Deleted ${result.deletedCount} item.`))
-            .catch(err => console.error(`Delete failed with error: ${err}`))
+                await User.deleteOne({ _id: body.params.id })
+                    .then(result => console.log(`Deleted ${result.deletedCount} item.`))
+                    .catch(err => console.error(`Delete failed with error: ${err}`))
 
             else throw new Error(` [USUARIO NÂO ENCONTRADO] `);
 
@@ -74,7 +75,6 @@ const authService = {
                 body, //Update 
                 { new: true } //retorna o cadastro atualizado              
             )
-            body.password = bcrypt.hashSync(body.password, 10)
 
             if (!findUpdate) {
                 throw new Error(' [NÃO FOI POSSIVEL ATUALIZAR] ')
@@ -92,22 +92,25 @@ const authService = {
 
         try {
             const { email, password } = body;
-
-            const user = await User.findOne({ email }) /*.select('+password');*/
-
+            const user = await User.findOne({ email })
             if (!user) {
                 throw new Error(' [ Usuario não encontrado ] ');
             }
-            //comparando os password encriptados
-            //so funcionou com encriptação feita direto no cadastro
-            //o q tem la no Model NÃO deu boa
-            const cryp = await bcrypt.compareSync(password, user.password)
-
-            if (!cryp) {
-                throw new Error(' [ Senha incorreta ] ');
-            }
-
+            // //comparando os password encriptados //so funcionou com encriptação feita direto no cadastro //o q tem la no Model NÃO deu boa
+            // const cryp = await bcrypt.compareSync(password, user.password)
+            // console.log(cryp)
+            // if (!cryp) {
+            //     throw new Error(' [ Senha incorreta ] ');
+            // }
             //user.password = undefined; //Para nao voltar a senha
+            
+            const _secretKey = ('1');
+            const ncryptObject = new ncrypt(_secretKey)
+            const decryptedData = await ncryptObject.decrypt(user.password);
+
+            // console.log("... and then decryption...");
+            // console.log("Decipher Text : " + decryptedData);
+            // console.log("...done.");
 
             const token = jwt.sign(
                 { id: user.id },
@@ -115,10 +118,20 @@ const authService = {
                 { expiresIn: 86400 }, //1 Dia
             )
 
-            return await ({
+            return ({
                 user,
                 token
             });
+
+        } catch (error) {
+            throw new Error(error)
+        }
+    },
+
+    // TENTAR COM Ncrypt: https://www.npmjs.com/package/ncrypt-js
+    async Entrar(body) {
+
+        try {
 
         } catch (error) {
             throw new Error(error)

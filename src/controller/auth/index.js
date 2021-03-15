@@ -32,7 +32,7 @@ async function deleteUserId(req, res) { //deletando por id.
         const delUser = await authSrv.deleteUser(req)
 
         if (delUser){
-            return res.status(200).json('Usuario deletado com sucesso!')
+            return res.status(200).json( 'Usuario deletado com sucesso: ' )
         }
 
         // if (!delUser) {return res.status(400).json(' [Usuario não encontrado] ')}
